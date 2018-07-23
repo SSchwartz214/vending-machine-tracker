@@ -1,7 +1,3 @@
-# As a user
-# When I visit a specific snack page
-# I see the average price for snacks in those vending machines
-# And I see a count of the different kinds of items in that vending machine.
 require 'rails_helper'
 
 describe 'When a user visits a snack show page' do
@@ -25,13 +21,26 @@ describe 'When a user visits a snack show page' do
   end
   it 'shows average price' do
     owner = Owner.create(name: "Sam's Snacks")
-    dons  = owner.machines.create(location: "Don's Mixed Drinks")
+    dons  = owner.machines.create(location: "Denver")
     skittles = Snack.create(name: "Skittles", price: 1)
-    twix = Snack.create(name: "Skittles", price: 3)
+    twix = Snack.create(name: "Twix", price: 3)
     VendingMachineSnack.create(machine: dons, snack: skittles)
+    VendingMachineSnack.create(machine: dons, snack: twix)
+
+    visit snack_path(skittles)
+    expect(page).to have_content("Average price: 2")
+  end
+  it 'shows count of each snack type' do
+    owner = Owner.create(name: "Sam's Snacks")
+    dons  = owner.machines.create(location: "Denver")
+    skittles = Snack.create(name: "Skittles", price: 1)
+    skittles_2 = Snack.create(name: "Skittles", price: 1)
+    twix = Snack.create(name: "Twix", price: 3)
+    VendingMachineSnack.create(machine: dons, snack: skittles)
+    VendingMachineSnack.create(machine: dons, snack: twix)
 
     visit snack_path(skittles)
 
-    expect(page).to have_content("Average price: 2")
+    expect(page).to have_content("Total types of snacks: 2")
   end
 end
